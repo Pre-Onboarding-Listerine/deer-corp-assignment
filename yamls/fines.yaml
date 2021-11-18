@@ -1,0 +1,6 @@
+invalid_return_area:
+  distance_rate: 10
+  currency: KRW
+forbidden_return_area:
+  amount: 6000
+  currency: KRW

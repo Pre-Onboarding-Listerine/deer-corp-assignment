@@ -1,0 +1,4 @@
+return_at_parking_zone:
+  rate: 30
+reuse:
+  minutes: 30
