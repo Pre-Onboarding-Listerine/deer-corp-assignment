@@ -4,8 +4,8 @@ import pytest
 from assertpy import assert_that
 
 from src.configs.discount_options import PARKING_ZONE_STATEMENT
-from src.rate_policies.domain.models import Usage, UsageTime, Location
-from src.rate_policies.domain.models.areas import ParkingZone
+from src.rate_policies.domain.models import DeerUsage, UsageTime
+from src.rate_policies.domain.models.areas import ParkingZone, Location
 from src.rate_policies.domain.models.statements import ParkingZoneStatement
 
 
@@ -41,7 +41,7 @@ class TestParkingZoneStatement:
 
             @pytest.fixture
             def usage(self, end_location, usage_time):
-                return Usage(
+                return DeerUsage(
                     user_id=1,
                     use_deer_name="deer-1",
                     end_location=end_location,
@@ -75,7 +75,7 @@ class TestParkingZoneStatement:
 
             @pytest.fixture
             def usage(self, end_location, usage_time):
-                return Usage(
+                return DeerUsage(
                     user_id=1,
                     use_deer_name="deer-1",
                     end_location=end_location,

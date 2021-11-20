@@ -3,12 +3,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from src.rate_policies.domain.models.areas import Location
 from src.rate_policies.exceptions import DifferentCurrencyException, DifferentTypeAddOperationException
-
-
-class Location(BaseModel):
-    lat: float
-    lng: float
 
 
 class Fee(BaseModel):
@@ -50,7 +46,7 @@ class UsageTime(BaseModel):
         return duration.total_seconds() / 60
 
 
-class Usage(BaseModel):
+class DeerUsage(BaseModel):
     user_id: int
     use_deer_name: str
     end_location: Location

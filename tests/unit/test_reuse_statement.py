@@ -4,7 +4,8 @@ import pytest
 from assertpy import assert_that
 
 from src.configs.discount_options import REUSE_STATEMENT
-from src.rate_policies.domain.models import Usage, UsageTime, Location
+from src.rate_policies.domain.models import DeerUsage, UsageTime
+from src.rate_policies.domain.models.areas import Location
 from src.rate_policies.domain.models.statements import ReuseStatement
 
 
@@ -29,7 +30,7 @@ class TestReuseStatement:
 
     @pytest.fixture
     def last_usage(self, last_location, last_usage_time):
-        return Usage(
+        return DeerUsage(
             user_id=1,
             use_deer_name="deer-1",
             end_location=last_location,
@@ -59,7 +60,7 @@ class TestReuseStatement:
 
             @pytest.fixture
             def usage(self, end_location, usage_time):
-                return Usage(
+                return DeerUsage(
                     user_id=1,
                     use_deer_name="deer-1",
                     end_location=end_location,
@@ -93,7 +94,7 @@ class TestReuseStatement:
 
             @pytest.fixture
             def usage(self, end_location, usage_time):
-                return Usage(
+                return DeerUsage(
                     user_id=1,
                     use_deer_name="deer-1",
                     end_location=end_location,
@@ -110,7 +111,7 @@ class TestReuseStatement:
 
                 assert_that(actual).is_equal_to(expected)
 
-        class TestWhenUseOtherKickBoard:
+        class TestWhenUseOtherDeer:
             @pytest.fixture
             def end_location(self):
                 return Location(
@@ -127,7 +128,7 @@ class TestReuseStatement:
 
             @pytest.fixture
             def usage(self, end_location, usage_time):
-                return Usage(
+                return DeerUsage(
                     user_id=1,
                     use_deer_name="deer-2",
                     end_location=end_location,

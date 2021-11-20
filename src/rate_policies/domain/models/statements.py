@@ -1,15 +1,15 @@
 import abc
 from datetime import timedelta
 
-from src.rate_policies.domain.models import Usage, Fee
+from src.rate_policies.domain.models import DeerUsage, Fee
 from src.rate_policies.domain.models.areas import ParkingZone
 
 
 class Statement(abc.ABC):
-    usage: Usage
+    usage: DeerUsage
 
     @abc.abstractmethod
-    def is_applicable(self, usage: Usage) -> bool:
+    def is_applicable(self, usage: DeerUsage) -> bool:
         raise NotImplementedError
 
 
@@ -17,7 +17,7 @@ class RateDiscountStatement(Statement):
     discount_rate: float
 
     @abc.abstractmethod
-    def is_applicable(self, usage: Usage) -> bool:
+    def is_applicable(self, usage: DeerUsage) -> bool:
         raise NotImplementedError
 
 
@@ -25,7 +25,7 @@ class AmountDiscountStatement(Statement):
     amount: Fee
 
     @abc.abstractmethod
-    def is_applicable(self, usage: Usage) -> bool:
+    def is_applicable(self, usage: DeerUsage) -> bool:
         raise NotImplementedError
 
 
@@ -34,7 +34,7 @@ class ParkingZoneStatement(RateDiscountStatement):
         self.discount_rate = discount_rate
         self.parking_zone = parking_zone
 
-    def is_applicable(self, usage: Usage) -> bool:
+    def is_applicable(self, usage: DeerUsage) -> bool:
         if self.parking_zone.includes(usage.end_location):
             return True
         else:
@@ -42,11 +42,11 @@ class ParkingZoneStatement(RateDiscountStatement):
 
 
 class ReuseStatement(AmountDiscountStatement):
-    def __init__(self, limit: int, last_usage: Usage):
+    def __init__(self, limit: int, last_usage: DeerUsage):
         self.limit = timedelta(minutes=limit)
         self.last_usage = last_usage
 
-    def is_applicable(self, usage: Usage) -> bool:
+    def is_applicable(self, usage: DeerUsage) -> bool:
         if self.last_usage.use_deer_name != usage.use_deer_name:
             return False
         reuse_delta = usage.usage_time.start - self.last_usage.usage_time.end
