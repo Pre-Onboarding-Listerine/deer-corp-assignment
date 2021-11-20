@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from assertpy import assert_that
 
-from src.configs.discount_options import PARKING_ZONE_STATEMENT, REUSE_STATEMENT
+from src.configs.discount_options import PARKING_ZONE_ARTICLE, REUSE_ARTICLE
 from src.rate_policies.domain.models import Fee, DeerUsage, UsageTime, AreaFee, Deer
 from src.rate_policies.domain.models.areas import Location, ParkingZone
 from src.rate_policies.domain.models.policies import RateDiscountPolicy
@@ -67,15 +67,15 @@ class TestRateDiscountPolicy:
                 @pytest.fixture
                 def policy(self, rate_discount_policy, usage, area_fee, calculator_uow):
                     options = {
-                        "parking_zone": PARKING_ZONE_STATEMENT,
-                        "reuse": REUSE_STATEMENT
+                        "parking_zone": PARKING_ZONE_ARTICLE,
+                        "reuse": REUSE_ARTICLE
                     }
                     return rate_discount_policy(usage, area_fee, calculator_uow, options)
 
                 def test_it_returns_basic_fee(self, policy):
                     basic_fee = Fee(amount=2290, currency="KRW")
                     rate_discounted_fee = policy.apply_on(basic_fee)
-                    expected = basic_fee - basic_fee * (PARKING_ZONE_STATEMENT["rate"] / 100)
+                    expected = basic_fee - basic_fee * (PARKING_ZONE_ARTICLE["rate"] / 100)
 
                     assert_that(rate_discounted_fee).is_equal_to(expected)
 

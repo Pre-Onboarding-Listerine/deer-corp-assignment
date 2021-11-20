@@ -3,17 +3,17 @@ from datetime import datetime, timedelta
 import pytest
 from assertpy import assert_that
 
-from src.configs.discount_options import REUSE_STATEMENT
+from src.configs.discount_options import REUSE_ARTICLE
 from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
 from src.rate_policies.domain.models.areas import Location
 from src.rate_policies.domain.models.articles import ReuseArticle
 from tests.unit.fixtures.unit_of_work import FakeUsageRepository
 
 
-class TestReuseStatement:
+class TestReuseArticle:
     @pytest.fixture
     def reuse_options(self):
-        return REUSE_STATEMENT
+        return REUSE_ARTICLE
 
     @pytest.fixture
     def last_location(self):
@@ -45,7 +45,7 @@ class TestReuseStatement:
         })
 
     @pytest.fixture
-    def reuse_statement(self):
+    def reuse_article(self):
         return ReuseArticle
 
     class TestIsApplicable:
@@ -75,15 +75,15 @@ class TestReuseStatement:
                 )
 
             @pytest.fixture
-            def statement(self, reuse_options, usage_repository):
+            def article(self, reuse_options, usage_repository):
                 return ReuseArticle(
                     discount_amount=790,
                     options=reuse_options,
                     usages=usage_repository
                 )
 
-            def test_it_returns_true(self, statement, usage):
-                actual = statement.is_applicable(usage)
+            def test_it_returns_true(self, article, usage):
+                actual = article.is_applicable(usage)
                 expected = True
 
                 assert_that(actual).is_equal_to(expected)
@@ -113,15 +113,15 @@ class TestReuseStatement:
                 )
 
             @pytest.fixture
-            def statement(self, reuse_options, usage_repository):
+            def article(self, reuse_options, usage_repository):
                 return ReuseArticle(
                     discount_amount=790,
                     options=reuse_options,
                     usages=usage_repository
                 )
 
-            def test_it_returns_false(self, statement, usage):
-                actual = statement.is_applicable(usage)
+            def test_it_returns_false(self, article, usage):
+                actual = article.is_applicable(usage)
                 expected = False
 
                 assert_that(actual).is_equal_to(expected)
@@ -151,15 +151,15 @@ class TestReuseStatement:
                 )
 
             @pytest.fixture
-            def statement(self, reuse_options, usage_repository):
+            def article(self, reuse_options, usage_repository):
                 return ReuseArticle(
                     discount_amount=790,
                     options=reuse_options,
                     usages=usage_repository
                 )
 
-            def test_it_returns_false(self, statement, usage):
-                actual = statement.is_applicable(usage)
+            def test_it_returns_false(self, article, usage):
+                actual = article.is_applicable(usage)
                 expected = False
 
                 assert_that(actual).is_equal_to(expected)

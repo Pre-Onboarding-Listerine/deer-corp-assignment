@@ -3,14 +3,14 @@ from datetime import datetime
 import pytest
 from assertpy import assert_that
 
-from src.configs.discount_options import PARKING_ZONE_STATEMENT
+from src.configs.discount_options import PARKING_ZONE_ARTICLE
 from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
 from src.rate_policies.domain.models.areas import Location, ParkingZone
 from src.rate_policies.domain.models.articles import ParkingZoneArticle
 from tests.unit.fixtures.unit_of_work import FakeParkingZoneRepository
 
 
-class TestParkingZoneStatement:
+class TestParkingZoneArticle:
     @pytest.fixture
     def parking_zone_repository(self):
         return FakeParkingZoneRepository({
@@ -24,7 +24,7 @@ class TestParkingZoneStatement:
         })
 
     @pytest.fixture
-    def parking_zone_statement(self):
+    def parking_zone_article(self):
         return ParkingZoneArticle
 
     class TestIsApplicable:
@@ -54,14 +54,14 @@ class TestParkingZoneStatement:
                 )
 
             @pytest.fixture
-            def statement(self, usage, parking_zone_repository):
+            def article(self, usage, parking_zone_repository):
                 return ParkingZoneArticle(
-                    discount_rate=PARKING_ZONE_STATEMENT["rate"],
+                    discount_rate=PARKING_ZONE_ARTICLE["rate"],
                     parking_zones=parking_zone_repository
                 )
 
-            def test_it_returns_true(self, statement, usage):
-                actual = statement.is_applicable(usage)
+            def test_it_returns_true(self, article, usage):
+                actual = article.is_applicable(usage)
                 expected = True
 
                 assert_that(actual).is_equal_to(expected)
@@ -91,14 +91,14 @@ class TestParkingZoneStatement:
                 )
 
             @pytest.fixture
-            def statement(self, usage, parking_zone_repository):
+            def article(self, usage, parking_zone_repository):
                 return ParkingZoneArticle(
-                    discount_rate=PARKING_ZONE_STATEMENT["rate"],
+                    discount_rate=PARKING_ZONE_ARTICLE["rate"],
                     parking_zones=parking_zone_repository
                 )
 
-            def test_it_returns_false(self, statement, usage):
-                actual = statement.is_applicable(usage)
+            def test_it_returns_false(self, article, usage):
+                actual = article.is_applicable(usage)
                 expected = False
 
                 assert_that(actual).is_equal_to(expected)

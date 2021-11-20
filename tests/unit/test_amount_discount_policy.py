@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from assertpy import assert_that
 
-from src.configs.discount_options import PARKING_ZONE_STATEMENT, REUSE_STATEMENT
+from src.configs.discount_options import PARKING_ZONE_ARTICLE, REUSE_ARTICLE
 from src.rate_policies.domain.models import Fee, DeerUsage, UsageTime, AreaFee, Deer
 from src.rate_policies.domain.models.areas import Location
 from src.rate_policies.domain.models.policies import AmountDiscountPolicy
@@ -72,8 +72,8 @@ class TestAmountDiscountPolicy:
                 @pytest.fixture
                 def policy(self, amount_discount_policy, usage, area_fee, calculator_uow):
                     options = {
-                        "parking_zone": PARKING_ZONE_STATEMENT,
-                        "reuse": REUSE_STATEMENT
+                        "parking_zone": PARKING_ZONE_ARTICLE,
+                        "reuse": REUSE_ARTICLE
                     }
                     return amount_discount_policy(usage, area_fee, calculator_uow, options)
 
