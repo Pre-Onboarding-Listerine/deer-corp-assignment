@@ -7,7 +7,7 @@ from src.configs.database import Base
 
 
 pytest_plugins = [
-    
+    "tests.unit.fixtures"
 ]
 
 TEST_SQLITE_URL = "sqlite:///:memory:"

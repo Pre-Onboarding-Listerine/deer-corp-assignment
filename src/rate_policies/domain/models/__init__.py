@@ -36,6 +36,12 @@ class Fee(BaseModel):
         return Fee(amount=new_amount, currency=self.currency)
 
 
+class AreaFee(BaseModel):
+    area_id: int
+    base: Fee
+    rate_per_minute: Fee
+
+
 class UsageTime(BaseModel):
     start: datetime
     end: datetime
@@ -46,9 +52,14 @@ class UsageTime(BaseModel):
         return duration.total_seconds() / 60
 
 
+class Deer(BaseModel):
+    deer_name: str
+    deer_area_id: int
+
+
 class DeerUsage(BaseModel):
     user_id: int
-    use_deer_name: str
+    use_deer: Deer
     end_location: Location
     usage_time: UsageTime
 

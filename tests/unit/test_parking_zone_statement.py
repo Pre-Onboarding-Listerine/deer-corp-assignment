@@ -4,19 +4,24 @@ import pytest
 from assertpy import assert_that
 
 from src.configs.discount_options import PARKING_ZONE_STATEMENT
-from src.rate_policies.domain.models import DeerUsage, UsageTime
-from src.rate_policies.domain.models.areas import ParkingZone, Location
+from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
+from src.rate_policies.domain.models.areas import Location, ParkingZone
 from src.rate_policies.domain.models.statements import ParkingZoneStatement
+from tests.unit.fixtures.unit_of_work import FakeParkingZoneRepository
 
 
 class TestParkingZoneStatement:
     @pytest.fixture
-    def parking_zone(self):
-        return ParkingZone(
-            parkingzone_id=1,
-            parkingzone_center=Location(lat=37.541743, lng=127.080091),
-            parkingzone_radius=200
-        )
+    def parking_zone_repository(self):
+        return FakeParkingZoneRepository({
+            1: [
+                ParkingZone(
+                    parkingzone_id=1,
+                    parkingzone_center=Location(lat=37.541732, lng=127.079799),
+                    parkingzone_radius=200
+                )
+            ]
+        })
 
     @pytest.fixture
     def parking_zone_statement(self):
@@ -43,14 +48,17 @@ class TestParkingZoneStatement:
             def usage(self, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer_name="deer-1",
+                    use_deer=Deer(deer_name="deer-1", deer_area_id=1),
                     end_location=end_location,
                     usage_time=usage_time
                 )
 
             @pytest.fixture
-            def statement(self, usage, parking_zone):
-                return ParkingZoneStatement(discount_rate=PARKING_ZONE_STATEMENT["rate"], parking_zone=parking_zone)
+            def statement(self, usage, parking_zone_repository):
+                return ParkingZoneStatement(
+                    discount_rate=PARKING_ZONE_STATEMENT["rate"],
+                    parking_zones=parking_zone_repository
+                )
 
             def test_it_returns_true(self, statement, usage):
                 actual = statement.is_applicable(usage)
@@ -77,14 +85,17 @@ class TestParkingZoneStatement:
             def usage(self, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer_name="deer-1",
+                    use_deer=Deer(deer_name="deer-1", deer_area_id=1),
                     end_location=end_location,
                     usage_time=usage_time
                 )
 
             @pytest.fixture
-            def statement(self, usage, parking_zone):
-                return ParkingZoneStatement(discount_rate=PARKING_ZONE_STATEMENT["rate"], parking_zone=parking_zone)
+            def statement(self, usage, parking_zone_repository):
+                return ParkingZoneStatement(
+                    discount_rate=PARKING_ZONE_STATEMENT["rate"],
+                    parking_zones=parking_zone_repository
+                )
 
             def test_it_returns_false(self, statement, usage):
                 actual = statement.is_applicable(usage)

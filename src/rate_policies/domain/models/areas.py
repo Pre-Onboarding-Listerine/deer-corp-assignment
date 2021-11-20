@@ -36,8 +36,8 @@ class ParkingZone(BaseModel):
     parkingzone_radius: float
 
     def includes(self, location: Location):
-        distance = self.parkingzone_center.distance_from(location)
-        if distance > self.parkingzone_radius:
+        dist = self.parkingzone_center.distance_from(location)
+        if dist > self.parkingzone_radius:
             return False
         else:
             return True

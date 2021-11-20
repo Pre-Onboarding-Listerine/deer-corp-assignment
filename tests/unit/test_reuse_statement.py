@@ -4,15 +4,16 @@ import pytest
 from assertpy import assert_that
 
 from src.configs.discount_options import REUSE_STATEMENT
-from src.rate_policies.domain.models import DeerUsage, UsageTime
+from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
 from src.rate_policies.domain.models.areas import Location
 from src.rate_policies.domain.models.statements import ReuseStatement
+from tests.unit.fixtures.unit_of_work import FakeUsageRepository
 
 
 class TestReuseStatement:
     @pytest.fixture
-    def limit_minutes(self):
-        return REUSE_STATEMENT["minutes"]
+    def reuse_options(self):
+        return REUSE_STATEMENT
 
     @pytest.fixture
     def last_location(self):
@@ -32,10 +33,16 @@ class TestReuseStatement:
     def last_usage(self, last_location, last_usage_time):
         return DeerUsage(
             user_id=1,
-            use_deer_name="deer-1",
+            use_deer=Deer(deer_name="deer-1", deer_area_id=1),
             end_location=last_location,
             usage_time=last_usage_time
         )
+
+    @pytest.fixture
+    def usage_repository(self, last_usage):
+        return FakeUsageRepository({
+            1: last_usage
+        })
 
     @pytest.fixture
     def reuse_statement(self):
@@ -52,9 +59,9 @@ class TestReuseStatement:
                 )
 
             @pytest.fixture
-            def usage_time(self, limit_minutes):
+            def usage_time(self, reuse_options):
                 return UsageTime(
-                    start=datetime(2021, 11, 18, 8, 50, 0) + timedelta(minutes=limit_minutes - 10),
+                    start=datetime(2021, 11, 18, 8, 50, 0) + timedelta(minutes=reuse_options["minutes"] - 10),
                     end=datetime(2021, 11, 18, 12, 10, 0)
                 )
 
@@ -62,14 +69,18 @@ class TestReuseStatement:
             def usage(self, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer_name="deer-1",
+                    use_deer=Deer(deer_name="deer-1", deer_area_id=1),
                     end_location=end_location,
                     usage_time=usage_time
                 )
 
             @pytest.fixture
-            def statement(self, limit_minutes, last_usage):
-                return ReuseStatement(limit=limit_minutes, last_usage=last_usage)
+            def statement(self, reuse_options, usage_repository):
+                return ReuseStatement(
+                    discount_amount=790,
+                    options=reuse_options,
+                    usages=usage_repository
+                )
 
             def test_it_returns_true(self, statement, usage):
                 actual = statement.is_applicable(usage)
@@ -86,9 +97,9 @@ class TestReuseStatement:
                 )
 
             @pytest.fixture
-            def usage_time(self, limit_minutes):
+            def usage_time(self, reuse_options):
                 return UsageTime(
-                    start=datetime(2021, 11, 18, 8, 50, 0) + timedelta(minutes=limit_minutes + 10),
+                    start=datetime(2021, 11, 18, 8, 50, 0) + timedelta(minutes=reuse_options["minutes"] + 10),
                     end=datetime(2021, 11, 18, 12, 10, 0)
                 )
 
@@ -96,14 +107,18 @@ class TestReuseStatement:
             def usage(self, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer_name="deer-1",
+                    use_deer=Deer(deer_name="deer-1", deer_area_id=1),
                     end_location=end_location,
                     usage_time=usage_time
                 )
 
             @pytest.fixture
-            def statement(self, limit_minutes, last_usage):
-                return ReuseStatement(limit=limit_minutes, last_usage=last_usage)
+            def statement(self, reuse_options, usage_repository):
+                return ReuseStatement(
+                    discount_amount=790,
+                    options=reuse_options,
+                    usages=usage_repository
+                )
 
             def test_it_returns_false(self, statement, usage):
                 actual = statement.is_applicable(usage)
@@ -130,14 +145,18 @@ class TestReuseStatement:
             def usage(self, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer_name="deer-2",
+                    use_deer=Deer(deer_name="deer-2", deer_area_id=1),
                     end_location=end_location,
                     usage_time=usage_time
                 )
 
             @pytest.fixture
-            def statement(self, limit_minutes, last_usage):
-                return ReuseStatement(limit=limit_minutes, last_usage=last_usage)
+            def statement(self, reuse_options, usage_repository):
+                return ReuseStatement(
+                    discount_amount=790,
+                    options=reuse_options,
+                    usages=usage_repository
+                )
 
             def test_it_returns_false(self, statement, usage):
                 actual = statement.is_applicable(usage)
