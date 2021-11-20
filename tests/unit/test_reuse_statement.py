@@ -6,7 +6,7 @@ from assertpy import assert_that
 from src.configs.discount_options import REUSE_STATEMENT
 from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
 from src.rate_policies.domain.models.areas import Location
-from src.rate_policies.domain.models.statements import ReuseStatement
+from src.rate_policies.domain.models.articles import ReuseArticle
 from tests.unit.fixtures.unit_of_work import FakeUsageRepository
 
 
@@ -46,7 +46,7 @@ class TestReuseStatement:
 
     @pytest.fixture
     def reuse_statement(self):
-        return ReuseStatement
+        return ReuseArticle
 
     class TestIsApplicable:
 
@@ -76,7 +76,7 @@ class TestReuseStatement:
 
             @pytest.fixture
             def statement(self, reuse_options, usage_repository):
-                return ReuseStatement(
+                return ReuseArticle(
                     discount_amount=790,
                     options=reuse_options,
                     usages=usage_repository
@@ -114,7 +114,7 @@ class TestReuseStatement:
 
             @pytest.fixture
             def statement(self, reuse_options, usage_repository):
-                return ReuseStatement(
+                return ReuseArticle(
                     discount_amount=790,
                     options=reuse_options,
                     usages=usage_repository
@@ -152,7 +152,7 @@ class TestReuseStatement:
 
             @pytest.fixture
             def statement(self, reuse_options, usage_repository):
-                return ReuseStatement(
+                return ReuseArticle(
                     discount_amount=790,
                     options=reuse_options,
                     usages=usage_repository

@@ -7,7 +7,7 @@ from src.rate_policies.infra.parking_zone_repository import AbstractParkingZoneR
 from src.rate_policies.infra.usage_repository import AbstractUsageRepository
 
 
-class Statement(abc.ABC):
+class Article(abc.ABC):
     usage: DeerUsage
 
     @abc.abstractmethod
@@ -15,7 +15,7 @@ class Statement(abc.ABC):
         raise NotImplementedError
 
 
-class RateDiscountStatement(Statement):
+class RateDiscountArticle(Article):
     discount_rate: float
 
     @abc.abstractmethod
@@ -23,7 +23,7 @@ class RateDiscountStatement(Statement):
         raise NotImplementedError
 
 
-class AmountDiscountStatement(Statement):
+class AmountDiscountArticle(Article):
     discount_amount: float
     currency: str
 
@@ -36,7 +36,11 @@ class AmountDiscountStatement(Statement):
         raise NotImplementedError
 
 
-class ParkingZoneStatement(RateDiscountStatement):
+class FineArticle(Article):
+    pass
+
+
+class ParkingZoneArticle(RateDiscountArticle):
     def __init__(self, discount_rate: float, parking_zones: AbstractParkingZoneRepository):
         self.discount_rate = discount_rate
         self.parking_zones = parking_zones
@@ -49,7 +53,7 @@ class ParkingZoneStatement(RateDiscountStatement):
         return False
 
 
-class ReuseStatement(AmountDiscountStatement):
+class ReuseArticle(AmountDiscountArticle):
     def __init__(self, discount_amount: float, options: dict, usages: AbstractUsageRepository):
         self.discount_amount = discount_amount
         self.currency = options["currency"]

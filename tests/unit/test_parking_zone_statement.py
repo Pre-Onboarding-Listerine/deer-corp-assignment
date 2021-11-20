@@ -6,7 +6,7 @@ from assertpy import assert_that
 from src.configs.discount_options import PARKING_ZONE_STATEMENT
 from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
 from src.rate_policies.domain.models.areas import Location, ParkingZone
-from src.rate_policies.domain.models.statements import ParkingZoneStatement
+from src.rate_policies.domain.models.articles import ParkingZoneArticle
 from tests.unit.fixtures.unit_of_work import FakeParkingZoneRepository
 
 
@@ -25,7 +25,7 @@ class TestParkingZoneStatement:
 
     @pytest.fixture
     def parking_zone_statement(self):
-        return ParkingZoneStatement
+        return ParkingZoneArticle
 
     class TestIsApplicable:
 
@@ -55,7 +55,7 @@ class TestParkingZoneStatement:
 
             @pytest.fixture
             def statement(self, usage, parking_zone_repository):
-                return ParkingZoneStatement(
+                return ParkingZoneArticle(
                     discount_rate=PARKING_ZONE_STATEMENT["rate"],
                     parking_zones=parking_zone_repository
                 )
@@ -92,7 +92,7 @@ class TestParkingZoneStatement:
 
             @pytest.fixture
             def statement(self, usage, parking_zone_repository):
-                return ParkingZoneStatement(
+                return ParkingZoneArticle(
                     discount_rate=PARKING_ZONE_STATEMENT["rate"],
                     parking_zones=parking_zone_repository
                 )

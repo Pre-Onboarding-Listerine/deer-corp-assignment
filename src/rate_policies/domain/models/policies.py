@@ -3,8 +3,8 @@ from typing import List
 
 from src.rate_policies.application.unit_of_work import AbstractCalculatorUnitOfWork
 from src.rate_policies.domain.models import Fee, DeerUsage, AreaFee
-from src.rate_policies.domain.models.statements import ParkingZoneStatement, ReuseStatement, \
-    AmountDiscountStatement, RateDiscountStatement
+from src.rate_policies.domain.models.articles import ParkingZoneArticle, ReuseArticle, \
+    AmountDiscountArticle, RateDiscountArticle
 
 
 class Policy(abc.ABC):
@@ -28,8 +28,8 @@ class BasicRatePolicy(Policy):
 class AmountDiscountPolicy(Policy):
     def __init__(self, usage: DeerUsage, area_fee: AreaFee, uow: AbstractCalculatorUnitOfWork, options: dict):
         super().__init__(usage, area_fee)
-        self.statements: List[AmountDiscountStatement] = [
-            ReuseStatement(discount_amount=area_fee.base.amount, options=options["reuse"], usages=uow.usages),
+        self.statements: List[AmountDiscountArticle] = [
+            ReuseArticle(discount_amount=area_fee.base.amount, options=options["reuse"], usages=uow.usages),
         ]
 
     def apply_on(self, fee: Fee) -> Fee:
@@ -44,8 +44,8 @@ class AmountDiscountPolicy(Policy):
 class RateDiscountPolicy(Policy):
     def __init__(self, usage: DeerUsage, area_fee: AreaFee, uow: AbstractCalculatorUnitOfWork, options: dict):
         super().__init__(usage, area_fee)
-        self.statements: List[RateDiscountStatement] = [
-            ParkingZoneStatement(discount_rate=options["parking_zone"]["rate"], parking_zones=uow.parking_zones),
+        self.statements: List[RateDiscountArticle] = [
+            ParkingZoneArticle(discount_rate=options["parking_zone"]["rate"], parking_zones=uow.parking_zones),
         ]
 
     def apply_on(self, fee: Fee) -> Fee:
