@@ -1,6 +1,18 @@
 version: '3.0'
 
 services:
+  backend:
+    restart: always
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    command: [ "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000" ]
+    entrypoint: ["dockerize", "-wait", "tcp://postgres:5432", "-timeout", "20s"]
+
   postgres:
     build:
       context: .
