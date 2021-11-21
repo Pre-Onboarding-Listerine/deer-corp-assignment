@@ -300,3 +300,5 @@ cython_debug/
 
 .idea
 /sqlite.db
+/mysql
+/data

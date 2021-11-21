@@ -3,11 +3,17 @@ asgiref==3.4.1
 assertpy==1.1
 attrs==21.2.0
 certifi==2021.10.8
+cffi==1.15.0
 charset-normalizer==2.0.7
 click==8.0.3
+cryptography==35.0.0
 dnspython==2.1.0
 email-validator==1.1.3
 fastapi==0.70.0
+GeoAlchemy2==0.9.4
+geographiclib==1.52
+geojson-pydantic==0.3.1
+geopy==2.2.0
 greenlet==1.1.2
 h11==0.12.0
 httptools==0.2.0
@@ -19,7 +25,9 @@ MarkupSafe==2.0.1
 orjson==3.6.4
 packaging==21.3
 pluggy==1.0.0
+psycopg2-binary==2.9.2
 py==1.11.0
+pycparser==2.21
 pydantic==1.8.2
 pyparsing==3.0.6
 pytest==6.2.5
@@ -27,6 +35,7 @@ python-dotenv==0.19.2
 python-multipart==0.0.5
 PyYAML==5.4.1
 requests==2.26.0
+Shapely==1.8.0
 six==1.16.0
 sniffio==1.2.0
 SQLAlchemy==1.4.27

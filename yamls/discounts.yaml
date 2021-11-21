@@ -1,4 +1,5 @@
-return_at_parking_zone:
+parking_zone:
   rate: 30
 reuse:
   minutes: 30
+  currency: KRW
