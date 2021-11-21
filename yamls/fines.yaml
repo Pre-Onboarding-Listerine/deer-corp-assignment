@@ -1,5 +1,5 @@
-invalid_return_area:
-  distance_rate: 10
+out_of_return_area:
+  rate_per_meter: 10
   currency: KRW
 forbidden_return_area:
   amount: 6000

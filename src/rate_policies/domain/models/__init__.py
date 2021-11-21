@@ -3,17 +3,27 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from src.rate_policies.domain.models.areas import Location
-from src.rate_policies.exceptions import DifferentCurrencyException, DifferentTypeAddOperationException
+from src.rate_policies.domain.models.areas import Location, Area
+from src.rate_policies.exceptions import DifferentCurrencyException, DifferentTypeOperationException
 
 
 class Fee(BaseModel):
     amount: float
     currency: str
 
+    def __gt__(self, other):
+        if not isinstance(other, Fee):
+            raise DifferentTypeOperationException(f"{type(other)} type is different from {type(Fee)} type")
+        if self.currency != other.currency:
+            raise DifferentCurrencyException(f"{other.currency} is different from {self.currency}")
+        return self.amount > other.amount
+
+    def __le__(self, other):
+        return not self.__gt__(other)
+
     def __add__(self, other: Fee):
         if not isinstance(other, Fee):
-            raise DifferentTypeAddOperationException(f"{type(other)} type is different from {type(Fee)} type")
+            raise DifferentTypeOperationException(f"{type(other)} type is different from {type(Fee)} type")
         if self.currency == other.currency:
             new_amount = self.amount + other.amount
             return Fee(amount=new_amount, currency=self.currency)
@@ -22,7 +32,7 @@ class Fee(BaseModel):
 
     def __sub__(self, other: Fee):
         if not isinstance(other, Fee):
-            raise DifferentTypeAddOperationException(f"{type(other)} type is different from {type(Fee)} type")
+            raise DifferentTypeOperationException(f"{type(other)} type is different from {type(Fee)} type")
         if self.currency == other.currency:
             new_amount = self.amount - other.amount
             if new_amount < 0:
@@ -53,8 +63,8 @@ class UsageTime(BaseModel):
 
 
 class Deer(BaseModel):
-    deer_name: str
-    deer_area_id: int
+    deer_name: int
+    deer_area: Area
 
 
 class DeerUsage(BaseModel):
@@ -62,6 +72,9 @@ class DeerUsage(BaseModel):
     use_deer: Deer
     end_location: Location
     usage_time: UsageTime
+
+    class Config:
+        orm_mode = True
 
     @property
     def minutes(self) -> float:

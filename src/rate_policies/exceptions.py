@@ -2,5 +2,13 @@ class DifferentCurrencyException(Exception):
     pass
 
 
-class DifferentTypeAddOperationException(Exception):
+class DifferentTypeOperationException(Exception):
+    pass
+
+
+class AreaNotFoundException(Exception):
+    pass
+
+
+class NeedToCheckApplicableException(Exception):
     pass

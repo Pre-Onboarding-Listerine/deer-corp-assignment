@@ -2,13 +2,24 @@ from datetime import datetime
 
 import pytest
 from assertpy import assert_that
+from geojson_pydantic import Polygon
 
-from src.rate_policies.domain.models import Fee, DeerUsage, UsageTime, AreaFee, Deer
+from src.rate_policies.domain.models import Fee, DeerUsage, UsageTime, AreaFee, Deer, areas
 from src.rate_policies.domain.models.areas import Location
 from src.rate_policies.domain.models.policies import BasicRatePolicy
 
 
 class TestBasicRatePolicy:
+    @pytest.fixture
+    def deer_area(self):
+        return areas.Area(
+            area_id=1,
+            area_boundary=Polygon(coordinates=[
+                [(37.543272, 127.07655), (37.541734, 127.074072), (37.539088, 127.07449), (37.538928, 127.078034),
+                 (37.540417, 127.080781), (37.542416, 127.080599), (37.543272, 127.07655)]]),
+            area_center=Location(lat=37.541302, lng=127.077852),
+        )
+
     @pytest.fixture
     def basic_rate_policy(self):
         return BasicRatePolicy
@@ -40,10 +51,10 @@ class TestBasicRatePolicy:
                     )
 
                 @pytest.fixture
-                def usage(self, end_location, usage_time):
+                def usage(self, deer_area, end_location, usage_time):
                     return DeerUsage(
                         user_id=1,
-                        use_deer=Deer(deer_name="deer-1", deer_area_id=1),
+                        use_deer=Deer(deer_name=1, deer_area=deer_area),
                         end_location=end_location,
                         usage_time=usage_time
                     )

@@ -2,15 +2,26 @@ from datetime import datetime
 
 import pytest
 from assertpy import assert_that
+from geojson_pydantic import Polygon
 
 from src.configs.discount_options import PARKING_ZONE_ARTICLE
-from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer
+from src.rate_policies.domain.models import DeerUsage, UsageTime, Deer, areas
 from src.rate_policies.domain.models.areas import Location, ParkingZone
 from src.rate_policies.domain.models.articles import ParkingZoneArticle
 from tests.unit.fixtures.unit_of_work import FakeParkingZoneRepository
 
 
 class TestParkingZoneArticle:
+    @pytest.fixture
+    def deer_area(self):
+        return areas.Area(
+            area_id=1,
+            area_boundary=Polygon(coordinates=[
+                [(37.543272, 127.07655), (37.541734, 127.074072), (37.539088, 127.07449), (37.538928, 127.078034),
+                 (37.540417, 127.080781), (37.542416, 127.080599), (37.543272, 127.07655)]]),
+            area_center=Location(lat=37.541302, lng=127.077852),
+        )
+
     @pytest.fixture
     def parking_zone_repository(self):
         return FakeParkingZoneRepository({
@@ -45,10 +56,10 @@ class TestParkingZoneArticle:
                 )
 
             @pytest.fixture
-            def usage(self, end_location, usage_time):
+            def usage(self, deer_area, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer=Deer(deer_name="deer-1", deer_area_id=1),
+                    use_deer=Deer(deer_name=1, deer_area=deer_area),
                     end_location=end_location,
                     usage_time=usage_time
                 )
@@ -61,7 +72,7 @@ class TestParkingZoneArticle:
                 )
 
             def test_it_returns_true(self, article, usage):
-                actual = article.is_applicable(usage)
+                actual = article._is_applicable(usage)
                 expected = True
 
                 assert_that(actual).is_equal_to(expected)
@@ -82,10 +93,10 @@ class TestParkingZoneArticle:
                 )
 
             @pytest.fixture
-            def usage(self, end_location, usage_time):
+            def usage(self, deer_area, end_location, usage_time):
                 return DeerUsage(
                     user_id=1,
-                    use_deer=Deer(deer_name="deer-1", deer_area_id=1),
+                    use_deer=Deer(deer_name=1, deer_area=deer_area),
                     end_location=end_location,
                     usage_time=usage_time
                 )
@@ -98,7 +109,7 @@ class TestParkingZoneArticle:
                 )
 
             def test_it_returns_false(self, article, usage):
-                actual = article.is_applicable(usage)
+                actual = article._is_applicable(usage)
                 expected = False
 
                 assert_that(actual).is_equal_to(expected)

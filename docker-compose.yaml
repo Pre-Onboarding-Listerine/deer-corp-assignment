@@ -1,0 +1,14 @@
+version: '3.0'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: DockerfileDB
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./data:/var/lib/postgresql/data"

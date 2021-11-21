@@ -1,7 +1,7 @@
 from typing import List
 
 from src.rate_policies.application.unit_of_work import AbstractCalculatorUnitOfWork
-from src.rate_policies.domain.models import DeerUsage
+from src.rate_policies.domain.models import DeerUsage, areas
 from src.rate_policies.domain.models.areas import ParkingZone, Location
 from src.rate_policies.infra.area_repository import AbstractAreaRepository
 from src.rate_policies.infra.deer_repository import AbstractDeerRepository
@@ -13,6 +13,9 @@ from src.rate_policies.infra.usage_repository import AbstractUsageRepository
 class FakeAreaRepository(AbstractAreaRepository):
     def __init__(self, areas):
         self._areas = areas
+
+    def get_by_id(self, area_id: int) -> areas.Area:
+        return self._areas[area_id]
 
 
 class FakeDeerRepository(AbstractDeerRepository):
@@ -32,8 +35,8 @@ class FakeParkingZoneRepository(AbstractParkingZoneRepository):
     def __init__(self, parking_zones):
         self._parking_zones = parking_zones
 
-    def locate_in(self, area_id: int) -> List[ParkingZone]:
-        return self._parking_zones[area_id]
+    def locate_in(self, area: areas.Area) -> List[ParkingZone]:
+        return self._parking_zones[area.area_id]
 
 
 class FakeForbiddenAreaRepository(AbstractForbiddenAreaRepository):
