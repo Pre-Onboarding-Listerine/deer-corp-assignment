@@ -15,7 +15,7 @@ class FeeCalculator:
         rate_discount_policy = RateDiscountPolicy(usage=usage, area_fee=area_fee, uow=self.uow, options=discounts)
         amount_discount_policy = AmountDiscountPolicy(usage=usage, area_fee=area_fee, uow=self.uow, options=discounts)
         fine_policy = FinePolicy(usage=usage, area_fee=area_fee, uow=self.uow, options=fines)
-        exception_policy = ExceptionPolicy(usage=usage, area_fee=area_fee, options=except_options)
+        exception_policy = ExceptionPolicy(usage=usage, area_fee=area_fee, options=except_options, uow=self.uow)
 
         return exception_policy.apply_on(
             fine_policy.apply_on(
