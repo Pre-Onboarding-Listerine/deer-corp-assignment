@@ -123,3 +123,20 @@ class ForbiddenReturnAreaArticle(Article):
             except DifferentTypeOperationException:
                 return fee
         return fee
+
+
+class BrokenDeerArticle(Article):
+    def __init__(self, options: dict):
+        self.limit = minutes=options["minutes"]
+
+    def _is_applicable(self, usage: DeerUsage) -> bool:
+        if usage.usage_time.duration < self.limit:
+            return True
+        else:
+            return False
+
+    def calculate(self, fee: Fee, usage: DeerUsage) -> Fee:
+        if self._is_applicable(usage):
+            return Fee(amount=0, currency=fee.currency)
+        else:
+            return fee

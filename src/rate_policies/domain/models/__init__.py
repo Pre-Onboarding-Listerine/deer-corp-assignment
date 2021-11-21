@@ -1,5 +1,6 @@
 from __future__ import annotations
 from datetime import datetime
+from typing import List, Dict
 
 from pydantic import BaseModel
 
@@ -10,6 +11,7 @@ from src.rate_policies.exceptions import DifferentCurrencyException, DifferentTy
 class Fee(BaseModel):
     amount: float
     currency: str
+    applied_articles: Dict = dict()
 
     def __gt__(self, other):
         if not isinstance(other, Fee):
@@ -65,6 +67,9 @@ class UsageTime(BaseModel):
 class Deer(BaseModel):
     deer_name: int
     deer_area: Area
+
+    class Config:
+        orm_mode = True
 
 
 class DeerUsage(BaseModel):

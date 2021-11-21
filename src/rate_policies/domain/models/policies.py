@@ -3,7 +3,8 @@ from typing import List
 
 from src.rate_policies.application.unit_of_work import AbstractCalculatorUnitOfWork
 from src.rate_policies.domain.models import Fee, DeerUsage, AreaFee
-from src.rate_policies.domain.models.articles import ParkingZoneArticle, ReuseArticle, Article
+from src.rate_policies.domain.models.articles import ParkingZoneArticle, ReuseArticle, Article, OutOfReturnAreaArticle, \
+    ForbiddenReturnAreaArticle, BrokenDeerArticle
 
 
 class Policy(abc.ABC):
@@ -59,5 +60,37 @@ class RateDiscountPolicy(Policy):
 
 
 class FinePolicy(Policy):
+    def __init__(self, usage: DeerUsage, area_fee: AreaFee, uow: AbstractCalculatorUnitOfWork, options: dict):
+        super().__init__(usage, area_fee)
+        self.articles = [
+            OutOfReturnAreaArticle(
+                fine_rate=options["out_of_return_area"]["rate_per_meter"],
+                options=options["out_of_return_area"],
+                areas=uow.areas
+            ),
+            ForbiddenReturnAreaArticle(
+                fine_amount=options["forbidden_return_area"]["amount"],
+                options=options["forbidden_return_area"],
+                forbidden_areas=uow.forbidden_areas
+            )
+        ]
+
     def apply_on(self, fee: Fee) -> Fee:
-        pass
+        fined_fee = fee
+        for article in self.articles:
+            fined_fee = article.calculate(fined_fee, self.usage)
+        return fined_fee
+
+
+class ExceptionPolicy(Policy):
+    def __init__(self, usage: DeerUsage, area_fee: AreaFee, uow: AbstractCalculatorUnitOfWork, options: dict):
+        super().__init__(usage, area_fee)
+        self.articles = [
+            BrokenDeerArticle(options=options["broken_deer"])
+        ]
+
+    def apply_on(self, fee: Fee) -> Fee:
+        final_fee = fee
+        for article in self.articles:
+            final_fee = article.calculate(final_fee, self.usage)
+        return final_fee

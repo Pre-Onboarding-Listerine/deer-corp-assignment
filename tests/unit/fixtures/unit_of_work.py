@@ -1,7 +1,7 @@
 from typing import List
 
 from src.rate_policies.application.unit_of_work import AbstractCalculatorUnitOfWork
-from src.rate_policies.domain.models import DeerUsage, areas
+from src.rate_policies.domain.models import DeerUsage, areas, Deer
 from src.rate_policies.domain.models.areas import ParkingZone, Location
 from src.rate_policies.infra.area_repository import AbstractAreaRepository
 from src.rate_policies.infra.deer_repository import AbstractDeerRepository
@@ -21,6 +21,9 @@ class FakeAreaRepository(AbstractAreaRepository):
 class FakeDeerRepository(AbstractDeerRepository):
     def __init__(self, deers):
         self._deers = deers
+
+    def get_deer_by_name(self, deer_name: int) -> Deer:
+        return self._deers[deer_name]
 
 
 class FakeUsageRepository(AbstractUsageRepository):

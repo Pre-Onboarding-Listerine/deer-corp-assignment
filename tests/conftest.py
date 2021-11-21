@@ -8,6 +8,7 @@ from src.rate_policies.infra.orm import ParkingZone
 from src.rate_policies.infra.orm import ForbiddenArea
 from src.rate_policies.infra.orm import Usage
 from src.rate_policies.infra.orm import Deer
+from src.rate_policies.infra.orm import AreaFee
 
 
 pytest_plugins = [

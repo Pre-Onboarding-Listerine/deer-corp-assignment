@@ -10,5 +10,9 @@ class AreaNotFoundException(Exception):
     pass
 
 
-class NeedToCheckApplicableException(Exception):
+class FeeNotFoundException(Exception):
+    pass
+
+
+class DeerNotFoundException(Exception):
     pass

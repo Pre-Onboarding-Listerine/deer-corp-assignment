@@ -14,3 +14,6 @@ with open("yamls/discounts.yaml") as f:
 
 with open("yamls/fines.yaml") as f:
     fines = yaml.load(f, Loader=yaml.FullLoader)
+
+with open("yamls/exceptions.yaml") as f:
+    except_options = yaml.load(f, Loader=yaml.FullLoader)

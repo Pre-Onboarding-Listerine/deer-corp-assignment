@@ -1,5 +1,5 @@
 from geoalchemy2 import Geometry, Geography
-from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, Float, DateTime, ForeignKey, String
 from sqlalchemy.orm import composite, relationship
 
 from src.configs.database import Base
@@ -52,3 +52,13 @@ class Usage(Base):
     use_end_at = Column(DateTime)
 
     use_deer = relationship("Deer", uselist=True)
+
+
+class AreaFee(Base):
+    __tablename__ = "fees"
+
+    area_fee_id = Column(Integer, primary_key=True, autoincrement=True)
+    area_id = Column("Area", ForeignKey('areas.area_id'))
+    base = Column(Integer)
+    rate_per_minute = Column(Integer)
+    currency = Column(String)

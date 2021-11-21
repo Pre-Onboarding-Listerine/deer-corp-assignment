@@ -6,7 +6,7 @@ from geojson_pydantic import Polygon
 
 from src.rate_policies.application.unit_of_work import SqlCalculatorUnitOfWork
 from src.rate_policies.domain import models
-from src.rate_policies.domain.models import areas, Location
+from src.rate_policies.domain.models import areas, Location, AreaFee, Fee, Deer
 from src.rate_policies.exceptions import AreaNotFoundException
 from src.rate_policies.infra import orm
 
@@ -110,3 +110,44 @@ def test_get_forbidden_area_contains_point(session_factory):
         in_forbidden_area = Location(lat=37.539197, lng=127.067932)
         is_included = uow.forbidden_areas.includes(in_forbidden_area)
         assert_that(is_included).is_equal_to(True)
+
+
+def insert_area_fees(session):
+    session.add(orm_area())
+    session.add(orm_area())
+
+    session.add(orm.AreaFee(area_id=1, base=790, rate_per_minute=150, currency="KRW"))
+    session.add(orm.AreaFee(area_id=2, base=300, rate_per_minute=70, currency="KRW"))
+
+
+def test_get_area_fee_by_area_id(session_factory):
+    session = session_factory()
+    insert_area_fees(session)
+    session.commit()
+
+    uow = SqlCalculatorUnitOfWork(session_factory)
+    with uow:
+        kunk_area_fee = uow.area_fees.get_fee_of(area_id=1)
+        assert_that(kunk_area_fee).is_instance_of(AreaFee)
+        assert_that(kunk_area_fee.base).is_equal_to(Fee(amount=790, currency="KRW"))
+
+        yeosu_area_fee = uow.area_fees.get_fee_of(area_id=2)
+        assert_that(yeosu_area_fee.base).is_equal_to(Fee(amount=300, currency="KRW"))
+        assert_that(yeosu_area_fee.rate_per_minute).is_equal_to(Fee(amount=70, currency="KRW"))
+
+
+def insert_deer(session):
+    session.add(orm_area())
+
+    session.add(orm.Deer(deer_name=1, deer_area_id=1))
+
+
+def test_get_deer_by_name(session_factory):
+    session = session_factory()
+    insert_deer(session)
+    session.commit()
+
+    uow = SqlCalculatorUnitOfWork(session_factory)
+    with uow:
+        deer = uow.deers.get_deer_by_name(deer_name=1)
+        assert_that(deer).is_instance_of(Deer)

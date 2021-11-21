@@ -1,6 +1,7 @@
 from __future__ import annotations
 import abc
 
+from src.rate_policies.infra.area_fee_repository import SqlAreaFeeRepository, AbstractAreaFeeRepository
 from src.rate_policies.infra.area_repository import AbstractAreaRepository, SqlAreaRepository
 from src.rate_policies.infra.deer_repository import AbstractDeerRepository, SqlDeerRepository
 from src.rate_policies.infra.forbidden_area_repository import AbstractForbiddenAreaRepository, \
@@ -15,6 +16,7 @@ class AbstractCalculatorUnitOfWork(abc.ABC):
     forbidden_areas: AbstractForbiddenAreaRepository
     parking_zones: AbstractParkingZoneRepository
     usages: AbstractUsageRepository
+    area_fees: AbstractAreaFeeRepository
 
     def __enter__(self) -> AbstractCalculatorUnitOfWork:
         return self
@@ -42,6 +44,7 @@ class SqlCalculatorUnitOfWork(AbstractCalculatorUnitOfWork):
         self.forbidden_areas = SqlForbiddenAreaRepository(self.session)
         self.parking_zones = SqlParkingZoneRepository(self.session)
         self.usages = SqlUsageRepository(self.session)
+        self.area_fees = SqlAreaFeeRepository(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):
