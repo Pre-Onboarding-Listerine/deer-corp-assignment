@@ -11,7 +11,6 @@ from src.rate_policies.exceptions import DifferentCurrencyException, DifferentTy
 class Fee(BaseModel):
     amount: float
     currency: str
-    applied_articles: Dict = dict()
 
     def __gt__(self, other):
         if not isinstance(other, Fee):
