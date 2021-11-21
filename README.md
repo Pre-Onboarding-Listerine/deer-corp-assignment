@@ -160,7 +160,7 @@ $ pytest
 
 ## 🛴 과제 결과물 테스트 및 확인 방법
 
-1. POSTMAN 확인: 
+1. POSTMAN 확인: https://documenter.getpostman.com/view/15905881/UVJWqfZk
 
 2. 배포된 서버의 주소
 
