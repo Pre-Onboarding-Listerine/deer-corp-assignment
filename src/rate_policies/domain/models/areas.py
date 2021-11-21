@@ -42,7 +42,6 @@ class Area(BaseModel):
 class ForbiddenArea(BaseModel):
     forbidden_area_id: int
     forbidden_area_boundary: Polygon
-    forbidden_area_coords: List[Location]
 
 
 class ParkingZone(BaseModel):

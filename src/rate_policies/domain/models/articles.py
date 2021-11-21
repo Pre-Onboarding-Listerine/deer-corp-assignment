@@ -2,12 +2,12 @@ import abc
 from datetime import timedelta
 
 from geopy.distance import distance
-from shapely.geometry import Polygon, shape, Point, LineString
+from shapely.geometry import Polygon, Point, LineString
 
 from src.rate_policies.domain.models import DeerUsage, Fee
-from src.rate_policies.exceptions import NeedToCheckApplicableException, DifferentCurrencyException, \
-    DifferentTypeOperationException, AreaNotFoundException
+from src.rate_policies.exceptions import DifferentCurrencyException, DifferentTypeOperationException
 from src.rate_policies.infra.area_repository import AbstractAreaRepository
+from src.rate_policies.infra.forbidden_area_repository import AbstractForbiddenAreaRepository
 from src.rate_policies.infra.parking_zone_repository import AbstractParkingZoneRepository
 from src.rate_policies.infra.usage_repository import AbstractUsageRepository
 
@@ -102,13 +102,24 @@ class OutOfReturnAreaArticle(Article):
 
 
 class ForbiddenReturnAreaArticle(Article):
-    def __init__(self, fine_amount: float, options: dict, areas: AbstractAreaRepository):
+    def __init__(self, fine_amount: float, options: dict, forbidden_areas: AbstractForbiddenAreaRepository):
         self.fine_amount = fine_amount
         self.currency = options["currency"]
-        self.areas = areas
+        self.forbidden_areas = forbidden_areas
 
     def _is_applicable(self, usage: DeerUsage) -> bool:
-        pass
+        returned_location = usage.end_location
+        if self.forbidden_areas.includes(returned_location):
+            return True
+        else:
+            return False
 
     def calculate(self, fee: Fee, usage: DeerUsage) -> Fee:
-        pass
+        if self._is_applicable(usage):
+            try:
+                return fee + Fee(amount=self.fine_amount, currency=self.currency)
+            except DifferentCurrencyException:
+                return fee
+            except DifferentTypeOperationException:
+                return fee
+        return fee

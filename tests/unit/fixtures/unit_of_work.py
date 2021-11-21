@@ -43,6 +43,9 @@ class FakeForbiddenAreaRepository(AbstractForbiddenAreaRepository):
     def __init__(self, forbidden_areas):
         self._forbidden_areas = forbidden_areas
 
+    def includes(self, returned_location: Location) -> bool:
+        return self._forbidden_areas[returned_location.lat]
+
 
 class FakeCalculatorUnitOfWork(AbstractCalculatorUnitOfWork):
     def __init__(self):

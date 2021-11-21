@@ -46,14 +46,7 @@ def model_area():
     )
 
 
-def insert_usages(session, model_area):
-    # session.add(orm.Usage(user_id=1, use_deer=orm.Deer(deer_name=1, deer_area=model_area),
-    #                       use_end=Location(lat=37.455691, lng=127.1351404).to_point(),
-    #                       use_start_at=datetime(2021, 11, 18, 9, 0, 0), use_end_at=datetime(2021, 11, 18, 9, 0, 0)))
-    # session.add(orm.Usage(user_id=1, use_deer=orm.Deer(deer_name=1, deer_area=model_area),
-    #                       use_end=Location(lat=37.544061, lng=127.081604).to_point(),
-    #                       use_start_at=datetime(2021, 11, 18, 8, 0, 0), use_end_at=datetime(2021, 11, 18, 8, 20, 0)))
-
+def insert_usages(session):
     session.add(orm_area())
 
     session.add(orm.Deer(deer_area_id=1))
@@ -66,9 +59,9 @@ def insert_usages(session, model_area):
                           use_start_at=datetime(2021, 11, 18, 8, 0, 0), use_end_at=datetime(2021, 11, 18, 8, 20, 0)))
 
 
-def test_get_last_usage(session_factory, model_area):
+def test_get_last_usage(session_factory):
     session = session_factory()
-    insert_usages(session, model_area)
+    insert_usages(session)
     session.commit()
 
     uow = SqlCalculatorUnitOfWork(session_factory)
@@ -95,3 +88,25 @@ def test_get_parking_zones_in_polygon(session_factory, model_area):
         parking_zones = uow.parking_zones.locate_in(model_area)
         assert_that(parking_zones[0]).is_instance_of(areas.ParkingZone)
         assert_that(len(parking_zones)).is_equal_to(3)
+
+
+def insert_forbidden_area(session):
+    session.add(orm.ForbiddenArea(forbidden_area_boundary='POLYGON((37.540201 127.067682, 37.538789 127.066912, 37.538108 127.068822, 37.539588 127.069487, 37.540201 127.067682))'))
+    session.add(orm.ForbiddenArea(forbidden_area_boundary='POLYGON((37.537630 127.066173, 37.537034 127.065911, 37.536404 127.067842, 37.537004 127.068099, 37.537630 127.066173))'))
+    session.add(orm.ForbiddenArea(forbidden_area_boundary='POLYGON((37.537420 127.069609, 37.536663 127.069251, 37.536433 127.069981, 37.537173 127.070378, 37.537420 127.069609))'))
+
+
+def test_get_forbidden_area_contains_point(session_factory):
+    session = session_factory()
+    insert_forbidden_area(session)
+    session.commit()
+
+    uow = SqlCalculatorUnitOfWork(session_factory)
+    with uow:
+        out_of_forbidden_area = Location(lat=37.537496, lng=127.068930)
+        is_included = uow.forbidden_areas.includes(out_of_forbidden_area)
+        assert_that(is_included).is_equal_to(False)
+
+        in_forbidden_area = Location(lat=37.539197, lng=127.067932)
+        is_included = uow.forbidden_areas.includes(in_forbidden_area)
+        assert_that(is_included).is_equal_to(True)
